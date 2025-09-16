@@ -107,3 +107,66 @@ So it’s like version control, but for the database structure. Super useful whe
 
 ## Why Django as a Starting Point?
 Django is a good first framework because it already has a lot of stuff built in (auth, admin, ORM, etc.), so you don’t need to reinvent the wheel. It also forces you to write clean and structured code with the MVT pattern, which helps beginners understand how web apps are organized. Plus, it’s used in real-world apps, has great docs, and once you get Django, learning other frameworks feels way easier.  
+
+
+
+</details>
+
+
+<details>
+<summary><b>Assignment 3</b></summary>
+
+### 1. Why do we need data delivery?
+So platforms can share and show data between users, apps, or systems. Without it, apps just stay isolated.
+
+### 2. XML vs JSON  
+JSON is simpler, easier to read/write, and works well with JS. XML is heavier. That’s why JSON is more popular.
+
+### 3. What’s the purpose of `is_valid()` in Django forms?  
+To check if the form input is valid before saving it. Avoids bad or incomplete data.
+
+### 4. Why do we need `csrf_token` in Django forms?  
+It protects against CSRF attacks. Without it, attackers could trick users into sending fake requests (like buying items, changing settings, etc.).
+
+### 5. How I implemented it  
+- Made `Shop` model with fields (name, price, etc.).
+    and then ran
+    ```
+    python manage.py makemigrations
+    python manage.py migrate
+    ```
+
+    to migrate all model changes
+
+
+- Created `ShopForm` to add new products.  
+    ```
+    class ShopForm(ModelForm):
+    class Meta:
+        model = Shop
+        fields = ["name","price","description","thumbnail","category","is_featured","size","stock","released"]
+    ```
+
+
+- Built views: publish product, show list, show detail, plus XML/JSON endpoints.  
+    "they're all in the application folders"
+
+
+- Made templates: home page, product detail, publish form.  
+    "can be seen in the application folder"
+
+- Tested by adding products and checking the pages.
+    "i looked at the url and used the id to check out the xml and json urls"
+
+### 6. Feedback  
+The assignments are good, I just wish the tutorial would explain further on the technical side and be explained instead of just laid out.
+
+
+### Images
+![JSON](images/json.png)
+![JSONbyID](images/jsonbyid.png)
+![XML](images/xml.png)
+![XMLbyID](images/xmlbyid.png)
+
+
+</details>

@@ -1,8 +1,53 @@
-<h1>G</h1>
+{% extends 'base.html' %}
+{% block content %}
+<h1>Football News</h1>
 
 <h5>NPM: </h5>
 <p>{{ npm }}</p>
-<h5>Name: </h5>
+
+<h5>Name:</h5>
 <p>{{ name }}</p>
-<h5>Class: </h5>
+
+<h5>Class:</h5>
 <p>{{ class }}</p>
+
+<a href="{% url 'main:publish_product' %}">
+  <button>+ Publish Product</button>
+</a>
+
+<hr>
+
+{% if not shop %}
+<p>No products available in the Shop.</p>
+{% else %}
+  {% for item in shop %}
+  <div>
+    <h2>
+      <a href="{% url 'main:show_product' item.id %}">{{ item.name }}</a>
+    </h2>
+
+    <p>
+      <b>Category:</b> {{ item.get_category_display }}
+      | <b>Price:</b> Rp {{ item.price }}
+      | <i>Released: {{ item.released|date:"d M Y" }}</i>
+      | Stock: {{ item.stock }}
+      | Views: {{ item.views }}
+    </p>
+
+    {% if item.thumbnail %}
+    <img src="{{ item.thumbnail }}" alt="thumbnail" width="150" height="100">
+    <br />
+    {% endif %}
+
+    <p>{{ item.description|truncatewords:25 }}...</p>
+
+    <p>
+      <a href="{% url 'main:show_product' item.id %}">
+        <button>View Details</button>
+      </a>
+    </p>
+  </div>
+  <hr>
+  {% endfor %}
+{% endif %}
+{% endblock %}
