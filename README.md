@@ -234,7 +234,7 @@ This is how I implemented the checklist for authentication and product (Shop) ma
 ### 5.1. Setup
 
 ```bash
-python -m venv venv
+source env/bin/activate
 ```
 
 ### 5.2. Register, Login, Logout
@@ -332,3 +332,6 @@ python manage.py runserver
 ---
 
 ✅ With this, the app now supports **user registration, login/logout, cookie tracking, and user-linked products**.
+
+## Three Dummy Accounts Test
+![Accounts](images/three dmmy accounts.jpg)
