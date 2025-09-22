@@ -170,3 +170,165 @@ The assignments are good, I just wish the tutorial would explain further on the 
 
 
 </details>
+
+
+<details>
+<Summary><b>Assignment 4</b></Summary>
+# Django Authentication & Shop Application
+
+## 1. What is Django’s AuthenticationForm?
+
+`AuthenticationForm` is a built-in form in Django that handles user login by validating the username and password against the database.
+
+* **Advantages**: Secure (hashing + validation handled automatically), convenient, integrates seamlessly with Django’s authentication system.
+* **Disadvantages**: Limited customization by default, harder to adapt for advanced login flows like email login or third-party authentication.
+
+---
+
+## 2. Authentication vs Authorization in Django
+
+* **Authentication**: Confirms *who* the user is (identity check).
+* **Authorization**: Determines *what* the user can do (permissions, access control).
+* **In Django**:
+
+  * Authentication handled by `django.contrib.auth` (forms, backends, middleware).
+  * Authorization handled by groups, permissions, and decorators like `@login_required`.
+
+---
+
+## 3. Sessions vs Cookies
+
+* **Sessions**:
+
+  * ✅ Store data server-side → safer.
+  * ❌ Uses server resources.
+* **Cookies**:
+
+  * ✅ Lightweight, fast.
+  * ❌ Stored client-side → vulnerable if not secured.
+* **Best practice**: Use sessions for sensitive info, cookies for simple preferences.
+
+---
+
+## 4. Are Cookies Secure by Default?
+
+* Cookies are **not secure by default**. Risks include XSS (stealing cookies) and MITM attacks (intercepting if no HTTPS).
+* **Django protections**:
+
+  * `HttpOnly` flag prevents JavaScript access.
+  * `Secure` flag ensures cookies only travel via HTTPS.
+  * CSRF tokens for forms.
+  * Developers can enforce:
+
+    ```py
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    ```
+
+---
+
+## 5. Implementation (Step-by-Step)
+
+This is how I implemented the checklist for authentication and product (Shop) management.
+
+### 5.1. Setup
+
+```bash
+python -m venv venv
+```
+
+### 5.2. Register, Login, Logout
+
+* Used `UserCreationForm` for registration, `AuthenticationForm` for login.
+* Added messages for feedback (e.g., “Account created successfully”).
+* Implemented `logout` view to clear cookies and redirect to login.
+
+### 5.3. Login State with Cookies
+
+* On login, stored a `last_login` cookie.
+* Displayed in `main.html`:
+
+```html
+<h5>Last login session: {{ last_login }}</h5>
+```
+
+### 5.4. Shop Model (Product Management)
+
+* Created a `Shop` model linked to `User`:
+
+```py
+from django.contrib.auth.models import User
+
+class Shop(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=255)
+    price = models.PositiveIntegerField(default=0)
+    description = models.TextField()
+    thumbnail = models.URLField(blank=True, null=True)
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='update')
+    is_featured = models.BooleanField(default=False)
+    size =models.PositiveIntegerField(default=0)
+    stock = models.PositiveIntegerField(default=0)
+    released = models.DateField(blank=True, null=True)
+```
+
+* Ran `makemigrations` and `migrate` again.
+
+### 5.5. Creating Products (linked to user)
+
+* Modified create view so each product is linked to the logged-in user:
+
+```py
+def publish_product(request):
+    form = ShopForm(request.POST or None)
+
+    if form.is_valid() and request.method == "POST":
+        shop_entry = form.save(commit = False)
+        shop_entry.user = request.user
+        shop_entry.save()
+        return redirect('main:show_main')
+
+    context = {'form': form}
+    return render(request, "publish_product.html", context)
+```
+
+### 5.6. Filtering Products
+
+* Added filter in `show_main`:
+
+```py
+filter_type = request.GET.get("filter", "all")
+if filter_type == "all":
+    shop_list = Shop.objects.all()
+else:
+    shop_list = Shop.objects.filter(user=request.user)
+```
+
+* Buttons in template:
+
+```html
+<a href="?filter=all"><button>All Products</button></a>
+<a href="?filter=my"><button>My Products</button></a>
+```
+
+### 5.7. Templates
+
+* `register.html` and `login.html` used `{% csrf_token %}` and `form.as_table`.
+* `main.html` displayed product list and last login.
+* `shop_detail.html` showed seller:
+
+```html
+<p>Published by: {{ shop.user.username }}</p>
+```
+
+### 5.8. Running & Testing
+
+```bash
+python manage.py runserver
+```
+
+* Tested: account creation, login/logout, cookie updates, product creation, filtering (all vs my products).
+
+---
+
+✅ With this, the app now supports **user registration, login/logout, cookie tracking, and user-linked products**.
