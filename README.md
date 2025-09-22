@@ -334,4 +334,4 @@ python manage.py runserver
 ✅ With this, the app now supports **user registration, login/logout, cookie tracking, and user-linked products**.
 
 ## Three Dummy Accounts Test
-![Accounts](images/three dmmy accounts.png)
+![Accounts](images/threedmmyaccounts.png)
