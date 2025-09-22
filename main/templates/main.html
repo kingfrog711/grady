@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>Football News</h1>
+<h1>Football Shop</h1>
 
 <h5>NPM: </h5>
 <p>{{ npm }}</p>
@@ -15,7 +15,20 @@
   <button>+ Publish Product</button>
 </a>
 
+<a href="{% url 'main:logout' %}">
+  <button>Logout</button>
+</a>
+
+<h5>Last login session: {{ last_login }}</h5>
 <hr>
+
+<a href="?filter=all">
+    <button type="button">All Articles</button>
+</a>
+<a href="?filter=my">
+    <button type="button">My Articles</button>
+</a> 
+
 
 {% if not shop %}
 <p>No products available in the Shop.</p>
@@ -29,9 +42,7 @@
     <p>
       <b>Category:</b> {{ item.get_category_display }}
       | <b>Price:</b> Rp {{ item.price }}
-      | <i>Released: {{ item.released|date:"d M Y" }}</i>
       | Stock: {{ item.stock }}
-      | Views: {{ item.views }}
     </p>
 
     {% if item.thumbnail %}

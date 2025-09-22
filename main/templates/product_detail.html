@@ -19,4 +19,12 @@
 <a href="{% url 'main:show_main' %}">
   <button>← Back to Shop List</button>
 </a>
-{% endblock %}
+
+
+{% if shop.user %}
+    <p>Author: {{ shop.user.username }}</p>
+{% else %}
+    <p>Author: Anonymous</p>
+{% endif %}
+
+{% endblock content %}

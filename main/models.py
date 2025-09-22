@@ -1,7 +1,11 @@
 import uuid
 from django.db import models
+from django.contrib.auth.models import User
+
 
 class Shop(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True) # add this
+    
     CATEGORY_CHOICES = [
         ('jersey', 'Jersey'),
         ('shoes', 'Football Shoes'),
