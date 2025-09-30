@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block meta %}
-<title>Publish Product - Grady</title>
+<title>Edit Product - Grady</title>
 {% endblock meta %}
 
 {% block content %}
-<div class="bg-[#F8FAF7] w-full min-h-screen">
+<div class="bg-[#F8FAF7] w-full min-h-screen text-[#1D3B24]">
   <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
     
     <div class="mb-8">
@@ -13,10 +15,10 @@
       </a>
     </div>
     
-    <div class="bg-[#E6ECD8] rounded-lg border border-[#C5D5BA] shadow-xl p-8 sm:p-12 form-style">
+    <div class="bg-[#E6ECD8] rounded-lg shadow-xl border border-[#C5D5BA] p-8 sm:p-12 form-style">
       <div class="mb-10">
-        <h1 class="text-3xl font-serif font-bold text-[#1D3B24] mb-2">Publish New Products</h1>
-        <p class="text-gray-600 text-lg">Publish your football gear!</p>
+        <h1 class="text-3xl font-serif font-bold text-[#1D3B24] mb-2">Edit Product</h1>
+        <p class="text-gray-600 text-lg">Update your exclusive football items and gear</p>
       </div>
       
       <form method="POST" class="space-y-8">
@@ -33,17 +35,19 @@
               <p class="mt-1 text-sm text-[#3B5E34]">{{ field.help_text }}</p>
             {% endif %}
             {% for error in field.errors %}
-              <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+              <p class="mt-1 text-sm text-red-500">{{ error }}</p>
             {% endfor %}
           </div>
         {% endfor %}
         
         <div class="flex flex-col sm:flex-row gap-4 pt-8 border-t border-[#C5D5BA]">
+          
           <a href="{% url 'main:show_main' %}" class="order-2 sm:order-1 px-8 py-3 border border-[#1D3B24] text-[#1D3B24] rounded-md font-semibold hover:bg-[#E6ECD8]/70 transition-colors text-center text-lg flex-1 sm:flex-none">
             Cancel
           </a>
+          
           <button type="submit" class="order-1 sm:order-2 flex-1 bg-[#3B5E34] text-white px-8 py-3 rounded-md font-bold hover:bg-[#1D3B24] transition-colors text-lg tracking-wider">
-            Publish Product
+            Update Product
           </button>
         </div>
       </form>

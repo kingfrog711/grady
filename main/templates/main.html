@@ -1,64 +1,54 @@
 {% extends 'base.html' %}
-{% block content %}
-<h1>Football Shop</h1>
+    {% load static %}
 
-<h5>NPM: </h5>
-<p>{{ npm }}</p>
+    {% block meta %}
+    <title>Grady</title>
+    {% endblock meta %}
 
-<h5>Name:</h5>
-<p>{{ name }}</p>
+    {% block content %}
+    {% include 'navbar.html' %}
+    <div class="bg-[#F8FAF7] w-full pt-16 min-h-screen text-[#1D3B24]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
 
-<h5>Class:</h5>
-<p>{{ class }}</p>
+        <div class="mb-10">
+          <h1 class="text-4xl font-serif font-bold text-[#1D3B24] mb-2">Latest Football Products</h1>
+          <p class="text-gray-600 text-lg">Browse for the latest anf freshest football gear</p>
+        </div>
 
-<a href="{% url 'main:publish_product' %}">
-  <button>+ Publish Product</button>
-</a>
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-10 bg-[#E6ECD8] rounded-lg border border-[#C5D5BA] shadow-md p-5">
+          <div class="flex space-x-3 mb-4 sm:mb-0">
+            <a href="?" class="{% if request.GET.filter == 'all' or not request.GET.filter  %} bg-[#3B5E34] text-white{% else %}bg-white text-[#1D3B24] border border-[#C5D5BA]{% endif %} px-5 py-2.5 rounded-md font-medium transition-colors hover:bg-[#1D3B24] hover:text-white text-base">
+              All Products
+            </a>
+            <a href="?filter=my" class="{% if request.GET.filter == 'my' %} bg-[#3B5E34] text-white{% else %}bg-white text-[#1D3B24] border border-[#C5D5BA]{% endif %} px-5 py-2.5 rounded-md font-medium transition-colors hover:bg-[#1D3B24] hover:text-white text-base">
+              My Products
+            </a>
+          </div>
+          {% if user.is_authenticated %}
+            <div class="text-sm text-gray-500">
+              Last login: {{ last_login }}
+            </div>
+          {% endif %}
+        </div>
 
-<a href="{% url 'main:logout' %}">
-  <button>Logout</button>
-</a>
-
-<h5>Last login session: {{ last_login }}</h5>
-<hr>
-
-<a href="?filter=all">
-    <button type="button">All Products</button>
-</a>
-<a href="?filter=my">
-    <button type="button">My Products</button>
-</a> 
-
-
-{% if not shop %}
-<p>No products available in the Shop.</p>
-{% else %}
-  {% for item in shop %}
-  <div>
-    <h2>
-      <a href="{% url 'main:show_product' item.id %}">{{ item.name }}</a>
-    </h2>
-
-    <p>
-      <b>Category:</b> {{ item.get_category_display }}
-      | <b>Price:</b> Rp {{ item.price }}
-      | Stock: {{ item.stock }}
-    </p>
-
-    {% if item.thumbnail %}
-    <img src="{{ item.thumbnail }}" alt="thumbnail" width="150" height="100">
-    <br />
-    {% endif %}
-
-    <p>{{ item.description|truncatewords:25 }}...</p>
-
-    <p>
-      <a href="{% url 'main:show_product' item.id %}">
-        <button>View Details</button>
-      </a>
-    </p>
-  </div>
-  <hr>
-  {% endfor %}
-{% endif %}
-{% endblock %}
+        {% if not shop %}
+          <div class="bg-[#E6ECD8] rounded-lg border border-[#C5D5BA] p-12 text-center shadow-inner">
+            <div class="w-32 h-32 mx-auto mb-4">
+              <img src="{% static 'image/no-product.jpg' %}" alt="No products available" class="w-full h-full object-contain">
+            </div>
+            <h3 class="text-xl font-medium text-[#1D3B24] mb-2">No product found</h3>
+            <p class="text-gray-600 mb-8">Be the first to publish football gear to the community.</p>
+            <a href="{% url 'main:publish_product' %}" class="inline-flex items-center px-6 py-3 bg-[#3B5E34] text-white rounded-md hover:bg-[#1D3B24] transition-colors font-semibold text-lg">
+              Publish Product
+            </a>
+          </div>
+        {% else %}
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for product in shop %}
+              {% include 'card_product.html' with product=product %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endblock content %}

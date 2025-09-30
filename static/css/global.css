@@ -1,0 +1,63 @@
+/* Input, textarea, select fields */
+.form-style form input,
+.form-style form textarea,
+.form-style form select {
+    width: 100%;
+    padding: 0.75rem 1rem; /* Increased padding for a more premium, spaced look */
+    border: 1px solid #C5D5BA; /* Pale Green/Sage border for subtle definition */
+    border-radius: 4px; /* Slightly softer corner radius */
+    background-color: #F8FAF7; /* Very light, off-white background */
+    color: #1D3B24; /* Dark Forest Green text (like the logo/titles) */
+    font-size: 1rem;
+    transition: border-color 0.3s, background-color 0.3s; /* Smooth transition for hover/focus */
+    box-sizing: border-box; /* Ensures padding is included in the element's total width and height */
+}
+
+/* On focus */
+.form-style form input:focus,
+.form-style form textarea:focus,
+.form-style form select:focus {
+    outline: none;
+    border-color: #3B5E34; /* Medium/Dark Green on focus (like the main button color) */
+    box-shadow: 0 0 0 1px #3B5E34; /* Subtle ring on focus */
+    background-color: #E6ECD8; /* Very light sage green background on focus */
+    color: #1D3B24; /* Keep Dark Forest Green text */
+}
+
+/* Checkbox fields */
+.form-style input[type="checkbox"] {
+    width: 1.25rem;
+    height: 1.25rem;
+    padding: 0;
+    border: 1px solid #3B5E34; /* Dark Green border */
+    border-radius: 2px; /* Sharper corner for a modern look */
+    background-color: #F8FAF7; /* Very light off-white background */
+    cursor: pointer;
+    position: relative;
+    appearance: none;
+    margin-right: 0.5rem; /* Add spacing after checkbox */
+    flex-shrink: 0; /* Prevents shrinking in flex containers */
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.form-style input[type="checkbox"]:checked {
+    background-color: #3B5E34; /* Dark Green when checked */
+    border-color: #3B5E34;
+}
+
+.form-style input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #FFFFFF; /* White checkmark */
+    font-weight: normal; /* Less bold for a refined look */
+    font-size: 0.75rem; /* Slightly smaller checkmark */
+}
+
+/* Added: Style for the label next to the checkbox (common requirement) */
+.form-style .checkbox-container label {
+    color: #1D3B24; /* Dark Forest Green text for labels */
+    font-size: 1rem;
+}

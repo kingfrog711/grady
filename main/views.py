@@ -13,6 +13,8 @@ from django.contrib.auth.decorators import login_required
 import datetime
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.utils import timezone
+
 
 @login_required(login_url='/login')
 def show_main(request):
@@ -39,6 +41,7 @@ def publish_product(request):
     if form.is_valid() and request.method == "POST":
         shop_entry = form.save(commit = False)
         shop_entry.user = request.user
+        shop_entry.released = timezone.now()
         shop_entry.save()
         return redirect('main:show_main')
 
@@ -50,7 +53,7 @@ def show_product(request, id):
     shop = get_object_or_404(Shop, pk=id)
 
     context = {
-        'shop': shop
+        'product': shop
     }
 
     return render(request, "product_detail.html", context)
@@ -67,16 +70,16 @@ def show_json(request):
 
 def show_xml_by_id(request, shop_id):
     try:
-        shop_item = Shop.objects.filter(pk=shop_id)
-        xml_data = serializers.serialize("xml", shop_item)
+        product = Shop.objects.filter(pk=shop_id)
+        xml_data = serializers.serialize("xml", product)
         return HttpResponse(xml_data, content_type="application/xml")
     except Shop.DoesNotExist:
         return HttpResponse(status=404)
 
 def show_json_by_id(request, shop_id):
     try:
-        shop_item = Shop.objects.get(pk=shop_id)
-        json_data = serializers.serialize("json", [shop_item])
+        product = Shop.objects.get(pk=shop_id)
+        json_data = serializers.serialize("json", [product])
         return HttpResponse(json_data, content_type="application/json")
     except Shop.DoesNotExist:
         return HttpResponse(status=404)
@@ -114,5 +117,24 @@ def logout_user(request):
     response = HttpResponseRedirect(reverse('main:login'))
     response.delete_cookie('last_login')
     return response
+
+def edit_product(request, id):
+    product = get_object_or_404(Shop, pk=id)
+    form = ShopForm(request.POST or None, instance=product)
+    if form.is_valid() and request.method == 'POST':
+        form.save()
+        return redirect('main:show_main')
+
+    context = {
+        'form': form
+    }
+
+    return render(request, "edit_product.html", context)
+
+
+def delete_product(request, id):
+    product = get_object_or_404(Shop, pk=id)
+    product.delete()
+    return HttpResponseRedirect(reverse('main:show_main'))
 
 

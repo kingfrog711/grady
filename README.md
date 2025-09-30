@@ -335,3 +335,81 @@ python manage.py runserver
 
 ## Three Dummy Accounts Test
 ![Accounts](images/threedmmyaccounts.png)
+
+</details>
+<details>
+<summary><b>Assignment 5</b></summary>
+
+
+## 1. CSS Selector Priorityy
+When multiple CSS selectors target the same HTML element, the browser determines which rule to apply based on specificity. The rule with the highest specificity wins.
+
+The priority order, from lowest to highest, is:
+
+* **Type Selectors** (e.g., p, div): Lowest specificity.
+* **Class Selectors** (e.g., .header), Attribute Selectors (e.g., ```[type="text"]```), and Pseudo-classes (e.g.,```:hover```): Medium specificity.
+* **ID Selectors** (e.g., #logo): High specificity.
+* **Inline Styles** (e.g., ```<div style="...">```): Very high specificity; overrides selectors.
+* **!important**: Overrides all other rules, including inline styles. It should be used sparingly, as it makes CSS difficult to maintain.
+
+If two selectors have the same specificity, the last rule declared in the stylesheet (or the file read last) wins.
+
+
+
+## 2. Responsive Design
+Responsive design is essential because it guarantees a web application's user interface (UI) and experience (UX) are consistently optimized across every device, screen size, and orientation, from small smartphones to large desktop monitors. 💻📱
+
+***Importance***
+* ***Mobile Dominance***: The majority of global internet traffic is mobile. A non-responsive design alienates a huge user base.
+
+* ***Improved UX***: Consistent usability across all devices lowers bounce rates and increases user satisfaction.
+
+* ***Mobile-friendly Benefit***: Search engines favor mobile-friendly websites, granting them better visibility in search results.
+
+
+***Example
+***Netflix*** : The layout adapts perfectly. On a large screen, multiple rows of content are visible; on a smartphone, the rows condense and scale up for easy tapping and swiping, ensuring seamless viewing. Therefore they adapted it perfectly
+
+**Amazon Website*** : Certain complex or secondary desktop pages (like managing detailed account settings, seller dashboards, or advanced filtering pages) often fail to adapt gracefully. They frequently maintain a fixed-width, dense desktop layout that forces mobile users to zoom and pan horizontally to interact with small buttons, tight text, and wide data tables. Therefore they are lackluster
+
+
+## 3. Box Model
+***Content*** - The actual text, images, or media. - Defined by the width and height properties.
+***Padding*** - Internal space between the content and the border. Padding adds to the element's overall size. - Implemented using padding: 15px; or setting individual sides (padding-top).
+***Border*** - The visual line or frame wrapped around the padding and content. - Implemented using ```border: 2px solid #333;``` (thickness, style, color).
+***Margin*** - External space between the border and adjacent elements. Margin is used for separation. - Implemented using margin: 20px; or individual sides (margin-bottom).
+
+
+## 4. Layout systems
+
+* a.. Flexbox (Flexible Box)
+    Concept: Designed for one-dimensional (1D) layouts, meaning it arranges items primarily along a single axis (either a row or a column).
+
+    Key Use: Excellent for creating navbars, centering items, distributing space evenly among a few elements, and aligning components within a fixed area.
+
+    Implementation: Requires display: flex; on the parent container.
+
+* b. CSS Grid
+    Concept: Designed for two-dimensional (2D) layouts, enabling simultaneous control over both rows AND columns.
+
+    Key Use: Ideal for defining the overall page architecture (header, sidebar, main content) and building complex, repeatable grids like product catalogs or dashboards.
+
+    Implementation: Requires display: grid; on the parent container, along with grid-template-rows and grid-template-columns.
+
+
+## 5. Implementation
+I established fixed custom hex codes for the body background (#F8FAF7), container background (#E6ECD8), dark text/details (#1D3B24), and accent/primary buttons (#3B5E34).
+
+I also updated the main page container's background to ```bg-[#F8FAF7]``` and set the default text color for most elements to ```text-[#1D3B24]```.
+
+Then I replaced generic bg-white and border-gray-200 classes on all content blocks (forms, cards) with the custom ```bg-[#E6ECD8]``` and subtle ```border-[#C5D5BA]```, adding appropriate shadows.
+
+Then I changed the font to font-serif class to main headings (h1) and increased the font size to achieve a more elegant aesthetic, updating text color to the dark green (```text-[#1D3B24]```).
+
+Also changed primary button backgrounds from bg-green-600 to the medium green accent ```bg-[#3B5E34]``` and set the hover effect to the dark green ```hover:bg-[#1D3B24]```. All accent links were styled using the new custom green colors.
+
+Then Updated all conditional styling logic (e.g., active filter buttons, product badges) to utilize the new primary and subtle accent colors.
+
+
+</details>
+

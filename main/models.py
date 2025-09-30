@@ -22,9 +22,9 @@ class Shop(models.Model):
     thumbnail = models.URLField(blank=True, null=True)
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='update')
     is_featured = models.BooleanField(default=False)
-    size =models.PositiveIntegerField(default=0)
+    size = models.PositiveIntegerField(default=0)
     stock = models.PositiveIntegerField(default=0)
-    released = models.DateField(blank=True, null=True)
+    released = models.DateTimeField(auto_now_add=True) 
 
     def __str__(self):
         return self.name
