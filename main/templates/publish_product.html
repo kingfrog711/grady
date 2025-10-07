@@ -1,53 +1,232 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block meta %}
-<title>Publish Product - Grady</title>
+<title>Product Detail - Grady</title>
 {% endblock meta %}
 
 {% block content %}
 <div class="bg-[#F8FAF7] w-full min-h-screen">
-  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
-    
-    <div class="mb-8">
-      <a href="{% url 'main:show_main' %}" class="text-[#1D3B24] hover:text-[#3B5E34] font-medium transition-colors text-lg tracking-wider">
-        ← Back to Products
-      </a>
-    </div>
-    
-    <div class="bg-[#E6ECD8] rounded-lg border border-[#C5D5BA] shadow-xl p-8 sm:p-12 form-style">
-      <div class="mb-10">
-        <h1 class="text-3xl font-serif font-bold text-[#1D3B24] mb-2">Publish New Products</h1>
-        <p class="text-gray-600 text-lg">Publish your football gear!</p>
-      </div>
-      
-      <form method="POST" class="space-y-8">
-        {% csrf_token %}
-        {% for field in form %}
-          <div>
-            <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-[#1D3B24] mb-2">
-              {{ field.label }}
-            </label>
-            <div class="w-full">
-              {{ field }}
-            </div>
-            {% if field.help_text %}
-              <p class="mt-1 text-sm text-[#3B5E34]">{{ field.help_text }}</p>
-            {% endif %}
-            {% for error in field.errors %}
-              <p class="mt-1 text-sm text-red-600">{{ error }}</p>
-            {% endfor %}
-          </div>
-        {% endfor %}
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
         
-        <div class="flex flex-col sm:flex-row gap-4 pt-8 border-t border-[#C5D5BA]">
-          <a href="{% url 'main:show_main' %}" class="order-2 sm:order-1 px-8 py-3 border border-[#1D3B24] text-[#1D3B24] rounded-md font-semibold hover:bg-[#E6ECD8]/70 transition-colors text-center text-lg flex-1 sm:flex-none">
-            Cancel
-          </a>
-          <button type="submit" class="order-1 sm:order-2 flex-1 bg-[#3B5E34] text-white px-8 py-3 rounded-md font-bold hover:bg-[#1D3B24] transition-colors text-lg tracking-wider">
-            Publish Product
-          </button>
+        <div class="mb-8">
+            <a href="{% url 'main:show_main' %}" class="text-[#1D3B24] hover:text-[#3B5E34] font-medium transition-colors text-lg">
+                ← Back to Products
+            </a>
         </div>
-      </form>
+        
+        <div id="loading-state" class="bg-[#E6ECD8] rounded-lg border border-[#C5D5BA] p-16 text-center">
+            <svg class="animate-spin h-8 w-8 text-[#3B5E34] inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+            <p class="text-gray-600 mt-3 text-lg">Loading product details...</p>
+        </div>
+
+        <div id="error-state" class="bg-[#E6ECD8] rounded-lg border border-[#C5D5BA] p-16 text-center hidden">
+            <div class="w-16 h-16 mx-auto mb-4">
+                <div class="text-red-600 text-5xl">⚠️</div>
+            </div>
+            <h3 class="text-xl font-medium text-[#1D3B24] mb-2">Failed to load product</h3>
+            <p class="text-gray-600">Please check the item ID and try again.</p>
+        </div>
+        
+        <article id="article-content" class="bg-[#E6ECD8] rounded-lg border border-[#C5D5BA] overflow-hidden hidden shadow-lg">
+            
+            <div class="p-6 sm:p-8">
+                <div id="badges-container" class="flex flex-wrap items-center gap-2 mb-4">
+                    </div>
+                
+                <h1 id="article-title" class="text-3xl sm:text-4xl font-serif font-bold text-[#1D3B24] leading-tight mb-4">
+                    </h1>
+                
+                <div class="flex flex-wrap items-center text-sm text-gray-600 gap-4">
+                    <time id="article-date">
+                        </time>
+                    <span id="article-price" class="font-bold text-lg text-[#3B5E34]">
+                        </span>
+                    <span id="article-stock" class="text-sm">
+                        </span>
+                </div>
+            </div>
+
+            <div id="featured-image-container" class="px-6 sm:px-8 hidden">
+                <img id="featured-image" 
+                    src="" 
+                    alt="" 
+                    class="w-full h-64 sm:h-80 lg:h-96 object-cover rounded-lg shadow-md">
+            </div>
+
+            <div class="p-6 sm:p-8">
+                <div class="prose prose-lg max-w-none">
+                    <div id="article-content-text" class="text-[#1D3B24] leading-relaxed whitespace-pre-line text-base sm:text-lg">
+                        </div>
+                </div>
+            </div>
+
+            <div class="border-t border-[#C5D5BA] p-6 sm:p-8 bg-[#F8FAF7]">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="font-medium text-[#1D3B24]">
+                            <p id="article-author">Seller: Loading...</p>
+                        </div>
+                        <p class="text-sm text-gray-600">Seller</p>
+                    </div>
+                    <div id="article-size-info" class="text-sm text-gray-600">
+                        </div>
+                </div>
+            </div>
+        </article>
     </div>
-  </div>
 </div>
-{% endblock %}
+
+
+
+<script>
+// Configuration
+// Changed NEWS_ID to PRODUCT_ID and NEWS_DETAIL_ENDPOINT to PRODUCT_DETAIL_ENDPOINT
+const PRODUCT_ID = "{{ product.id }}"; // Note: Assuming the context variable is now 'product'
+const PRODUCT_DETAIL_ENDPOINT = `{% url 'main:show_json_by_id' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', PRODUCT_ID);
+
+// --- COLOR CONSTANTS ---
+const COLOR_MEDIUM_GREEN = 'bg-[#3B5E34]';
+const TEXT_MEDIUM_GREEN = 'text-[#3B5E34]';
+const TEXT_DARK_GREEN = 'text-[#1D3B24]';
+const COLOR_RED_STOCK = 'bg-red-600 text-white'; // For low stock alert
+
+// DOM Elements
+const loadingState = document.getElementById('loading-state');
+const errorState = document.getElementById('error-state');
+const articleContent = document.getElementById('article-content');
+const badgesContainer = document.getElementById('badges-container');
+const articleTitle = document.getElementById('article-title');
+// New/Renamed elements for product details
+const articleDate = document.getElementById('article-date'); // Used for 'released' date
+const articlePrice = document.getElementById('article-price');
+const articleStock = document.getElementById('article-stock');
+const articleSizeInfo = document.getElementById('article-size-info');
+const featuredImageContainer = document.getElementById('featured-image-container');
+const featuredImage = document.getElementById('featured-image');
+const articleContentText = document.getElementById('article-content-text'); // Used for 'description'
+const articleAuthor = document.getElementById('article-author');
+
+// Show/hide page sections
+function showState(state) {
+    loadingState.classList.toggle('hidden', state !== 'loading');
+    errorState.classList.toggle('hidden', state !== 'error');
+    articleContent.classList.toggle('hidden', state !== 'ready');
+}
+
+// Get readable category name
+function getCategoryLabel(categoryCode) {
+    const categoryMapping = {
+        jersey: 'Jersey',
+        shoes: 'Football Shoes',
+        ball: 'Football',
+        accessories: 'Accessories',
+        equipment: 'Training Equipment',
+        fan_merch: 'Fan Merchandise'
+    };
+    return categoryMapping[categoryCode] || categoryCode;
+}
+
+// Render product content - function renamed
+function renderProduct(product) {
+    // Set title (name)
+    articleTitle.textContent = product.name;
+    document.title = `${product.name} - Grady`;
+    
+    // Set badges
+    badgesContainer.innerHTML = '';
+    
+    // Category badge (Medium Green)
+    const categoryBadge = document.createElement('span');
+    categoryBadge.className = `inline-flex items-center px-3 py-1 rounded-md text-xs font-medium ${COLOR_MEDIUM_GREEN} text-white`;
+    categoryBadge.textContent = getCategoryLabel(product.category);
+    badgesContainer.appendChild(categoryBadge);
+    
+    // Featured badge
+    if (product.is_featured) {
+        const featuredBadge = document.createElement('span');
+        featuredBadge.className = 'inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-yellow-100 text-yellow-800';
+        featuredBadge.textContent = 'Featured';
+        badgesContainer.appendChild(featuredBadge);
+    }
+    
+    // Low Stock badge (using stock field)
+    if (product.stock < 5) {
+        const stockBadge = document.createElement('span');
+        stockBadge.className = `inline-flex items-center px-3 py-1 rounded-md text-xs font-medium ${COLOR_RED_STOCK}`;
+        stockBadge.textContent = 'Low Stock';
+        badgesContainer.appendChild(stockBadge);
+    }
+    
+    // Set date (released) and price/stock
+    const formattedDate = new Date(product.released).toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric'
+    });
+    
+    articleDate.textContent = `Released: ${formattedDate}`;
+    
+    // Set Price
+    // Assuming product.price is a number
+    articlePrice.textContent = `Rp ${product.price.toLocaleString('id-ID')}`; 
+    
+    // Set Stock
+    articleStock.textContent = `Stock: ${product.stock} units`;
+    
+    // Set featured image
+    if (product.thumbnail) {
+        featuredImage.src = product.thumbnail;
+        featuredImage.alt = product.name;
+        featuredImageContainer.classList.remove('hidden');
+    } else {
+        featuredImageContainer.classList.add('hidden');
+    }
+    
+    // Set content (description)
+    articleContentText.textContent = product.description;
+    
+    // Set author (seller)
+    const authorName = product.user_username || 'Anonymous Seller';
+    articleAuthor.textContent = `Seller: ${authorName}`;
+
+    // Set size info
+    articleSizeInfo.textContent = `Size: ${product.size}`;
+}
+
+// Fetch product detail - function renamed
+async function loadProductDetail() {
+    try {
+        showState('loading');
+        
+        // Uses PRODUCT_DETAIL_ENDPOINT
+        const response = await fetch(PRODUCT_DETAIL_ENDPOINT, {
+            headers: { 'Accept': 'application/json' },
+        });
+
+        if (!response.ok) {
+            // Error handling for 404 or other HTTP errors
+            throw new Error('Failed to fetch product detail');
+        }
+
+        const productData = await response.json();
+        renderProduct(productData); // Calls renderProduct
+        showState('ready');
+    } catch (error) {
+        console.error('Error loading product detail:', error);
+        // Show the error state and customize the message if needed
+        const errorText = document.getElementById('error-state').querySelector('p');
+        errorText.textContent = "The requested product could not be found or an error occurred.";
+        showState('error');
+    }
+}
+
+// Initialize page - function renamed
+loadProductDetail();
+</script>
+
+
+{% endblock content %}

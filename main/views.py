@@ -65,8 +65,22 @@ def show_xml(request):
 
 def show_json(request):
     shop_list = Shop.objects.all()
-    json_data = serializers.serialize("json", shop_list)
-    return HttpResponse(json_data, content_type="application/json")
+    data = [
+        {
+            'id': str(shop.id),
+            'name': shop.name,
+            'price': shop.price,
+            'description': shop.description,
+            'thumbnail': shop.thumbnail,
+            'category': shop.category,
+            'is_featured': shop.is_featured,
+            'size': shop.size,
+            'stock': shop.stock,
+            'released': shop.released.isoformat() if shop.released else None,
+        }
+        for shop in shop_list
+    ]
+    return JsonResponse(data, safe=False)
 
 def show_xml_by_id(request, shop_id):
     try:
@@ -76,13 +90,32 @@ def show_xml_by_id(request, shop_id):
     except Shop.DoesNotExist:
         return HttpResponse(status=404)
 
-def show_json_by_id(request, shop_id):
+from django.http import JsonResponse
+from .models import Shop # <-- Must import the Product model
+from datetime import datetime # Required for date handling (though not strictly necessary here since isoformat is used)
+
+def show_json_by_id(request, product_id):
     try:
-        product = Shop.objects.get(pk=shop_id)
-        json_data = serializers.serialize("json", [product])
-        return HttpResponse(json_data, content_type="application/json")
-    except Shop.DoesNotExist:
-        return HttpResponse(status=404)
+        product = Product.objects.select_related('user').get(pk=product_id)
+        
+        data = {
+            'id': str(product.id),
+            'name': product.name,
+            'price': product.price,
+            'description': product.description,
+            'thumbnail': product.thumbnail,
+            'category': product.category,
+            'is_featured': product.is_featured,
+            'size': product.size,
+            'stock': product.stock,
+            'released': product.released.isoformat() if product.released else None,
+            'user_id': product.user_id,
+            'user_username': product.user.username if product.user_id else None,
+        }
+        return JsonResponse(data)
+        
+    except Product.DoesNotExist:
+        return JsonResponse({'detail': 'Product not found'}, status=404)
 
 def register(request):
     form = UserCreationForm()

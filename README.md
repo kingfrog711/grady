@@ -413,3 +413,52 @@ Then Updated all conditional styling logic (e.g., active filter buttons, product
 
 </details>
 
+<details>
+<summary><b>Assignment 6</b></summary>
+1) What is the difference between synchronous request and asynchronous request?
+
+Simple words:
+- Synchronous: the browser sends a request and waits. The page usually reloads or blocks until the server responds.
+- Asynchronous: the browser sends a request in the background and keeps working. When the server replies, JavaScript updates the page without reloading.
+
+---
+
+2) How does AJAX work in Django (request–response flow)?
+
+Simple words:
+1. JavaScript sends a request to a URL (often JSON).
+2. Django matches the URL and runs a view function.
+3. The view reads the incoming data, validates it, updates the database if needed, and returns a response (often JSON).
+4. JavaScript receives the response and updates the page (DOM) accordingly.
+
+---
+
+3) What are the advantages of using AJAX compared to regular rendering in Django?
+
+Simple words (short list):
+- Faster feel: only parts of the page update, so the app feels snappier.
+- Less data: send/receive smaller payloads instead of full HTML pages.
+- Better interactivity: inline edits, modals, live search, and instant feedback without full page reloads.
+
+---
+
+4) How do you ensure security when using AJAX for Login and Register features in Django?
+
+Simple steps:
+- CSRF: include the CSRF token in the request so Django can verify the origin.
+- HTTPS: use HTTPS in production so credentials are encrypted during transit.
+- Server-side validation: always validate credentials and input on the server (do not trust client-side checks alone).
+- Rate-limiting: consider throttling or temporary lockout after many failed attempts.
+- Generic errors: avoid revealing whether an account exists in error messages to reduce information leaks.
+
+---
+
+5) How does AJAX affect user experience (UX) on websites?
+
+Simple words:
+- AJAX makes interactions smoother and faster because users don't wait for a full page reload. You can show small loaders and brief notifications, disable buttons while a request runs, and update only the parts of the UI that need changing. This gives a more responsive, app-like experience.
+
+---
+
+If you want, I can also add a plain-English end-to-end explanation for login/register flows (no code), or reintroduce very small, non-technical examples instead. Tell me which you prefer.
+</details>
