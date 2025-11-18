@@ -22,14 +22,16 @@
     <div
       class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-10 bg-[#E6ECD8] rounded-lg border border-[#C5D5BA] shadow-md p-5">
       <div class="flex space-x-3 mb-4 sm:mb-0">
-        <a href="?"
+        <button onclick="setFilter('all')"
+          id="filterAll"
           class="{% if request.GET.filter == 'all' or not request.GET.filter  %} bg-[#3B5E34] text-white{% else %}bg-white text-[#1D3B24] border border-[#C5D5BA]{% endif %} px-5 py-2.5 rounded-md font-medium transition-colors hover:bg-[#1D3B24] hover:text-white text-base">
           All Products
-        </a>
-        <a href="?filter=my"
+        </button>
+        <button onclick="setFilter('my')"
+          id="filterMy"
           class="{% if request.GET.filter == 'my' %} bg-[#3B5E34] text-white{% else %}bg-white text-[#1D3B24] border border-[#C5D5BA]{% endif %} px-5 py-2.5 rounded-md font-medium transition-colors hover:bg-[#1D3B24] hover:text-white text-base">
           My Products
-        </a>
+        </button>
       </div>
       {% if user.is_authenticated %}
       <div class="text-sm text-gray-500">
@@ -47,7 +49,10 @@
       <p class="text-gray-600 mt-3 text-lg">Loading products...</p>
     </div>
 
-    <div id="error" class="hidden"></div>
+    <div id="error" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+      <p id="errorMessage">An error occurred while loading products.</p>
+      <button onclick="fetchProductsFromServer(null)" class="mt-2 text-red-700 underline">Retry</button>
+    </div>
 
 
     <div id="grid" class="hidden"></div>
@@ -64,12 +69,13 @@
       </a>
     </div>
   </div>
-
+  
+  {% include 'modal.html' %}
 
   <script>
     // Configuration
     // Changed to reflect 'shop' model endpoints
-    const SHOP_API_ENDPOINT = "{% url 'main:show_json' %}";
+    const SHOP_API_ENDPOINT = "{% url 'main:show_main' %}";
     const CURRENT_USER_ID = "{{ user.id|default_if_none:'' }}";
     const PUBLISH_PRODUCT_AJAX_ENDPOINT = "{% url 'main:publish_product_ajax' %}";
 
@@ -100,11 +106,15 @@
     let allProductData = [];
 
     // Show/hide page sections
-    function displayPageSection({ showLoading = false, showError = false, showEmpty = false, showGrid = false }) {
+    function displayPageSection({ showLoading = false, showError = false, showEmpty = false, showGrid = false, errorText = '' }) {
       loadingSpinner.classList.toggle('hidden', !showLoading);
       errorMessage.classList.toggle('hidden', !showError);
       emptyStateDisplay.classList.toggle('hidden', !showEmpty);
       productGridContainer.classList.toggle('hidden', !showGrid);
+
+      if (showError && errorText) {
+        document.getElementById('errorMessage').textContent = errorText;
+      }
 
       if (showGrid) {
         productGridContainer.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8';
@@ -129,10 +139,10 @@
       const articleElement = document.createElement('article');
       articleElement.className = `${COLOR_PALE_SAGE} rounded-lg border ${COLOR_SUBTLE_BORDER} hover:shadow-2xl transition-shadow duration-300 overflow-hidden flex flex-col h-full`;
 
-      // URLs updated to use 'shop' instead of 'product'
-      const detailLink = `{% url 'main:shop_detail' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', Item.id);
-      const editLink = `{% url 'main:edit_shop' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', Item.id);
-      const deleteLink = `{% url 'main:delete_shop' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', Item.id);
+      // URLs updated to use correct URL names
+      const detailLink = `{% url 'main:show_product' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', Item.id);
+      const editLink = `{% url 'main:edit_product' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', Item.id);
+      const deleteLink = `{% url 'main:delete_product' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', Item.id);
 
       // Assuming the model fields remain 'released', 'stock', 'price', etc.
       const formattedDate = new Date(Item.released).toLocaleDateString('en-US', {
@@ -207,7 +217,7 @@
     }
 
     // Filter and display products 
-    function filterAndDisplayProduct() {
+    async function filterAndDisplayProduct() {
       const filteredProducts = activeFilter === 'all'
         ? allProductData
         : allProductData.filter(item => String(item.user_id) === String(CURRENT_USER_ID));
@@ -219,14 +229,39 @@
         displayPageSection({ showGrid: true });
       }
     }
+    
+    // Set filter and update UI
+    function setFilter(filterType) {
+      activeFilter = filterType;
+      
+      // Update button styles
+      const filterAllBtn = document.getElementById('filterAll');
+      const filterMyBtn = document.getElementById('filterMy');
+      
+      if (filterType === 'all') {
+        filterAllBtn.className = 'bg-[#3B5E34] text-white px-5 py-2.5 rounded-md font-medium transition-colors hover:bg-[#1D3B24] hover:text-white text-base';
+        filterMyBtn.className = 'bg-white text-[#1D3B24] border border-[#C5D5BA] px-5 py-2.5 rounded-md font-medium transition-colors hover:bg-[#1D3B24] hover:text-white text-base';
+      } else {
+        filterAllBtn.className = 'bg-white text-[#1D3B24] border border-[#C5D5BA] px-5 py-2.5 rounded-md font-medium transition-colors hover:bg-[#1D3B24] hover:text-white text-base';
+        filterMyBtn.className = 'bg-[#3B5E34] text-white px-5 py-2.5 rounded-md font-medium transition-colors hover:bg-[#1D3B24] hover:text-white text-base';
+      }
+      
+      filterAndDisplayProduct();
+    }
 
     // Fetch product data from server - uses SHOP_API_ENDPOINT
-    async function fetchProductsFromServer() {
+    async function fetchProductsFromServer(sort_order = null) {
       try {
         displayPageSection({ showLoading: true });
 
-        const response = await fetch(SHOP_API_ENDPOINT, { 
+        let url = SHOP_API_ENDPOINT;
+        if (sort_order) {
+          url += `?sort=${sort_order}`;
+        }
+
+        const response = await fetch(url, { 
           headers: { 'Accept': 'application/json' },
+          credentials: 'include',
         });
 
         if (!response.ok) {
@@ -236,10 +271,11 @@
         const productData = await response.json();
         allProductData = productData || []; 
 
+
         filterAndDisplayProduct(); 
       } catch (error) {
         console.error('Error loading shop items:', error);
-        displayPageSection({ showError: true });
+        displayPageSection({ showError: true, errorText: `Error: ${error.message || 'Failed to load products'}` });
       }
     }
 
@@ -273,18 +309,27 @@
         });
 
         if (response.ok) {
-          showToast('Product published successfully!', 'success');
+          const responseData = await response.json();
+          alert('Product published successfully!');
           productForm.reset(); 
           hideModal(); 
-          await fetchProductsFromServer(); 
+          await fetchProductsFromServer(null); 
         } else {
           const errorData = await response.json();
-          showToast(`Error: ${errorData.error || 'Validation Failed'}`, 'error');
+          let errorMsg = 'Validation Failed';
+          if (errorData.error) {
+            if (typeof errorData.error === 'object') {
+              errorMsg = Object.values(errorData.error).flat().join(', ');
+            } else {
+              errorMsg = errorData.error;
+            }
+          }
+          alert(`Error: ${errorMsg}`);
         }
 
       } catch (error) {
         console.error('Submission failed:', error);
-        showToast('An unexpected error occurred during submission.', 'error');
+        alert('An unexpected error occurred during submission.');
       } finally {
         if (submitButton) {
           submitButton.disabled = false;

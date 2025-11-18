@@ -98,8 +98,8 @@
         }, 50); 
     }
 
-    // Renamed function to hideProductModal
-    function hideProductModal() {
+    // Renamed function to hideModal (alias for compatibility)
+    function hideModal() {
         const modal = document.getElementById('crudModal');
         // Renamed variable for context
         const modalContent = document.getElementById('crudModalContent'); 
@@ -112,5 +112,10 @@
         setTimeout(() => {
             modal.classList.add('hidden');
         }, 150); 
+    }
+    
+    // Alias for compatibility
+    function hideProductModal() {
+        hideModal();
     }
 </script>
